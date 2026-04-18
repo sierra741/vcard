@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vishnu S. Changaradil Harikumar — Contact</title>
+<style>
+  :root{--accent:#0b63c6;--bg:#f7f9fb;--card:#fff;--muted:#555}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);margin:0;padding:32px;display:flex;align-items:center;justify-content:center;min-height:100vh}
+  .card{background:var(--card);max-width:840px;width:100%;box-shadow:0 6px 24px rgba(12,20,30,0.08);border-radius:12px;display:grid;grid-template-columns:160px 1fr;gap:24px;padding:24px}
+  .photo{width:160px;height:160px;border-radius:10px;overflow:hidden;flex:0 0 160px;background:#eaeef6}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  h1{margin:0;font-size:1.25rem}
+  .meta{color:var(--muted);margin-top:6px;font-size:0.95rem}
+  .info{display:flex;flex-direction:column;gap:10px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .chip{background:#f1f6ff;border:1px solid #e6f0ff;color:var(--accent);padding:6px 10px;border-radius:999px;font-weight:600;font-size:0.9rem}
+  .actions{display:flex;gap:12px;margin-top:12px}
+  button,a.btn{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:10px;text-decoration:none;cursor:pointer;font-weight:600}
+  a.secondary{background:#eef2f8;color:var(--accent);border:1px solid #dbe9ff}
+  pre.vcard{background:#0b1220;color:#dbefff;padding:12px;border-radius:8px;overflow:auto;font-size:12px;line-height:1.35}
+  small.muted{color:#777}
+</style>
+</head>
+<body>
+<main class="card" id="card">
+  <div class="photo"><img id="photo" src="https://raw.githubusercontent.com/sierra741/vcard/main/photo.jpg" alt="Vishnu Shankar"></div>
+  <div>
+    <h1 id="name">Vishnu Shankar Changaradil Harikumar</h1>
+    <div class="meta">Specialist - Perfusionist — King Fahad Specialist Hospital, Tabuk</div>
+
+    <div class="info" style="margin-top:12px">
+      <div class="row"><span class="chip">SCFHS: 19048030</span><span class="chip">BLS: 11578853</span><span class="chip">ISECT: LM 932</span></div>
+      <div class="row"><strong>Work:</strong>&nbsp;<span>+966 55 896 8609</span>&nbsp;|&nbsp;<span>vharikumar@moh.gov.sa</span></div>
+      <div class="row"><strong>Mobile:</strong>&nbsp;<span>+91 88923 73524</span>&nbsp;|&nbsp;<span>vsch4perfusion@duck.com</span></div>
+      <div class="row"><strong>Address:</strong>&nbsp;<span>King Fahad Specialist Hospital, Al-Qadisiyah 2 dist, Tabuk 47717, KSA</span></div>
+    </div>
+
+    <div class="actions">
+      <button id="addBtn">Add contact</button>
+      <a id="openScfhs" class="btn secondary" href="https://scfhs.org.sa/portaleservices/Pages/RegistrationValidity.aspx?lang=en-us" target="_blank" rel="noopener">Verify SCFHS</a>
+      <button id="copyScfhs" class="btn secondary" style="background:#fff;color:var(--accent)">Copy SCFHS</button>
+    </div>
+
+    <details style="margin-top:14px">
+      <summary style="cursor:pointer">vCard (preview)</summary>
+      <pre class="vcard" id="vcardPreview"></pre>
+      <small class="muted">Use "Add contact" to download the .vcf file.</small>
+    </details>
+  </div>
+</main>
+
+<script>
+/* Editable contact data */
+const contact = {
+  fn: "Vishnu Shankar Changaradil Harikumar",
+  n: "Changaradil Harikumar;Vishnu Shankar;;;",
+  org: "King Fahad Specialist Hospital;Tabuk",
+  title: "Specialist - Perfusionist",
+  tel_work: "+966558968609",
+  tel_mobile: "+918892373524",
+  email_work: "vharikumar@moh.gov.sa",
+  email_home: "vsch4perfusion@duck.com",
+  adr: ";;King Fahad Specialist Hospital;Al-Qadisiyah 2 dist;Tabuk;47717;Kingdom of Saudi Arabia",
+  photo_url: "https://raw.githubusercontent.com/sierra741/vcard/main/photo.jpg",
+  scfhs: "19048030",
+  bls: "11578853",
+  isect: "LM 932",
+  bcp: "P/01/2301"
+};
+
+/* Build vCard 3.0 text (no embedded photo) */
+function buildVCardText() {
+  const lines = [
+    "BEGIN:VCARD",
+    "VERSION:3.0",
+    `FN:${contact.fn}`,
+    `N:${contact.n}`,
+    `ORG:${contact.org}`,
+    `TITLE:${contact.title}`,
+    `TEL;TYPE=work,VOICE:${contact.tel_work}`,
+    `TEL;TYPE=mobile,VOICE:${contact.tel_mobile}`,
+    `EMAIL;TYPE=work:${contact.email_work}`,
+    `EMAIL;TYPE=home:${contact.email_home}`,
+    `PHOTO;TYPE=JPEG;VALUE=URI:${contact.photo_url}`,
+    `ADR;TYPE=work:${contact.adr}`,
+    `X-SCFHS:${contact.scfhs}`,
+    `NOTE:SCFHS #: ${contact.scfhs} \\nBLS #: ${contact.bls} \\nISECT: ${contact.isect} \\nBCP-i: ${contact.bcp}`,
+    "END:VCARD"
+  ];
+  return lines.join("\r\n");
+}
+
+/* Download .vcf and attempt to open it on mobile */
+function downloadVCard() {
+  const vcard = buildVCardText();
+  const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "vishnu_shankar.vcf";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* Copy SCFHS number to clipboard */
+async function copyScfhs() {
+  try {
+    await navigator.clipboard.writeText(contact.scfhs);
+    alert("SCFHS number copied to clipboard: " + contact.scfhs);
+  } catch (e) {
+    // fallback: select temporary textarea
+    const t = document.createElement("textarea");
+    t.value = contact.scfhs;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand("copy");
+    t.remove();
+    alert("SCFHS number copied to clipboard: " + contact.scfhs);
+  }
+}
+
+/* Populate UI */
+document.getElementById("photo").src = contact.photo_url;
+document.getElementById("name").textContent = contact.fn;
+document.getElementById("vcardPreview").textContent = buildVCardText();
+document.getElementById("addBtn").addEventListener("click", downloadVCard);
+document.getElementById("copyScfhs").addEventListener("click", copyScfhs);
+document.getElementById("openScfhs").href = "https://scfhs.org.sa/portaleservices/Pages/RegistrationValidity.aspx?lang=en-us";
+
+/* Optional: try to open the downloaded vCard automatically on supported mobile browsers */
+document.getElementById("addBtn").addEventListener("click", () => {
+  // Some mobile browsers open the .vcf automatically after download; nothing more reliable to force.
+});
+</script>
+
